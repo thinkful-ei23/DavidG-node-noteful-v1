@@ -40,6 +40,7 @@ const noteful = (function () {
     $('.js-notes-list').on('click', '.js-note-show-link', event => {
       event.preventDefault();
 
+
       const noteId = getNoteIdFromElement(event.currentTarget);
 
       api.details(noteId) 
