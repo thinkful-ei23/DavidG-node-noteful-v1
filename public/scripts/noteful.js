@@ -40,10 +40,9 @@ const noteful = (function () {
     $('.js-notes-list').on('click', '.js-note-show-link', event => {
       event.preventDefault();
 
-
       const noteId = getNoteIdFromElement(event.currentTarget);
 
-      api.details(noteId) 
+      api.details(noteId)
         .then(detailsResponse => {
           store.currentNote = detailsResponse;
           render();
@@ -59,11 +58,12 @@ const noteful = (function () {
       const searchTerm = $('.js-note-search-entry').val();
       store.currentSearchTerm = searchTerm ? { searchTerm } : {};
 
-      api.search(store.currentSearchTerm) 
+      api.search(store.currentSearchTerm)
         .then(searchResponse => {
           store.notes = searchResponse;
           render();
         });
+
     });
   }
 
@@ -80,24 +80,29 @@ const noteful = (function () {
       };
 
       if (noteObj.id) {
-        api.update(store.currentNote.id, noteObj) .then(updateResponse => {
-          store.currentNote = updateResponse;
-          return api.search(store.currentSearchTerm) 
-            .then(searchResponse => {
-              store.notes = searchResponse;
-              render();
-            });
-        });
+
+        api.update(store.currentNote.id, noteObj)
+          .then(updateResponse => {
+            store.currentNote = updateResponse;
+            return api.search(store.currentSearchTerm);
+          })
+          .then(searchResponse => {
+            store.notes = searchResponse;
+            render();
+          });
+
       } else {
+
         api.create(noteObj)
           .then(createResponse => {
             store.currentNote = createResponse;
-            return api.search(store.currentSearchTerm)
-              .then(searchResponse => {
-                store.notes = searchResponse;
-                render();
-              });
+            return api.search(store.currentSearchTerm);
+          })
+          .then(searchResponse => {
+            store.notes = searchResponse;
+            render();
           });
+
       }
     });
   }
@@ -120,15 +125,16 @@ const noteful = (function () {
 
       api.remove(noteId)
         .then(() => {
-          return api.search(store.currentSearchTerm)
-            .then( searchResponse => {
-              store.notes = searchResponse;
-              if (noteId === store.currentNote.id) {
-                store.currentNote = {};
-              }
-              render();
-            });
+          return api.search(store.currentSearchTerm);
+        })
+        .then(searchResponse => {
+          store.notes = searchResponse;
+          if (noteId === store.currentNote.id) {
+            store.currentNote = {};
+          }
+          render();
         });
+
     });
   }
 

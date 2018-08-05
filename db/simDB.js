@@ -7,7 +7,7 @@ const { promisify } = require('util');
 const simDB = {
 
   // Synchronous Initialize
-  initialize: function (data) {
+  initialize: function(data) {
     this.nextVal = 1000;
     this.data = data.map(item => {
       item.id = this.nextVal++;
@@ -52,6 +52,23 @@ const simDB = {
     }, DELAY);
   },
 
+  replace: function (id, replaceItem, callback) {
+    setTimeout(() => {
+      try {
+        id = Number(id);
+        const index = this.data.findIndex(item => item.id === id);
+        if (index === -1) {
+          return callback(null, null);
+        }
+        replaceItem.id = id;
+        this.data.splice(index, 1, replaceItem);
+        callback(null, replaceItem);
+      } catch (err) {
+        callback(err);
+      }
+    });
+  },
+
   update: function (id, updateItem, callback) {
     setTimeout(() => {
       try {
@@ -87,13 +104,11 @@ const simDB = {
 
 };
 
-const simDB_Async = {
+module.exports = Object.create({
   initialize: simDB.initialize,
   create: promisify(simDB.create),
   filter: promisify(simDB.filter),
   find: promisify(simDB.find),
   update: promisify(simDB.update),
   delete: promisify(simDB.delete)
-};
-
-module.exports = Object.create(simDB_Async);
+});
