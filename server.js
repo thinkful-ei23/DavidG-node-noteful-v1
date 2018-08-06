@@ -53,8 +53,6 @@ function stopServer() {
     server.close(err => {
       if (err) {
         reject(err);
-        // Need an empty `return` line so that we don't
-        // also call `resolve()` below
         return;
       }
       resolve();
